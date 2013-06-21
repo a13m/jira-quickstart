@@ -16,30 +16,25 @@ if [ ! -d "${OPENSHIFT_DATA_DIR}downloads/current" ]
 then
   pushd ${OPENSHIFT_DATA_DIR}downloads
   JIRA_ARCHIVE=atlassian-jira-${JIRA_VERSION}-war.tar.gz
-  if [ ! -e JIRA_ARCHIVE ]; then
+  if [ ! -e $JIRA_ARCHIVE ]; then
     curl -O http://downloads.atlassian.com/software/jira/downloads/$JIRA_ARCHIVE
   fi
   tar xzf $JIRA_ARCHIVE
-  JIRA_INSTALL_DIR=${OPENSHIFT_DATA_DIR}downloads/${JIRA_ARCHIVE::-7}
+  JIRA_INSTALL_DIR=${OPENSHIFT_DATA_DIR}downloads/$( echo $JIRA_ARCHIVE | sed 's/.tar.gz//' )
   ln -s ${JIRA_INSTALL_DIR} ${OPENSHIFT_DATA_DIR}downloads/current
 else
   JIRA_INSTALL_DIR=`readlink -f ${OPENSHIFT_DATA_DIR}downloads/current`
   echo "JIRA is already installed at $JIRA_INSTALL_DIR"
 fi
 
-pushd $JIRA_INSTALL_DIR
-mkdir edit-webapp/WEB-INF/lib
-cp /usr/share/java/postgresql-jdbc.jar edit-webapp/WEB-INF/lib
-./build.sh
-mv dist-tomcat/atlassian-jira-${JIRA_VERSION}.war \
-   ${OPENSHIFT_REPO_DIR}/deployments/ROOT.war
-popd
-
 if [ ! -e ${OPENSHIFT_DATA_DIR}/jira ]; then
   mkdir ${OPENSHIFT_DATA_DIR}/jira
 fi
 JIRA_HOME=${OPENSHIFT_DATA_DIR}/jira
+
+pushd $JIRA_INSTALL_DIR
 echo "jira.home = $JIRA_HOME" >> edit-webapp/WEB-INF/classes/jira-application.properties
+
 cat <<EOF >${JIRA_HOME}/dbconfig.xml
 <?xml version="1.0" encoding="UTF-8"?>
 
@@ -62,4 +57,12 @@ cat <<EOF >${JIRA_HOME}/dbconfig.xml
   </jdbc-datasource>
 </jira-database-config>
 EOF
+
+mkdir ${JIRA_INSTALL_DIR}/edit-webapp/WEB-INF/lib
+cp /usr/share/java/postgresql-jdbc.jar ${JIRA_INSTALL_DIR}/edit-webapp/WEB-INF/lib
+rm dist-{generic,tomcat}/*.war
+./build.sh
+mv dist-tomcat/atlassian-jira-${JIRA_VERSION}.war \
+   ${OPENSHIFT_REPO_DIR}/deployments/ROOT.war
+popd
 
