@@ -16,7 +16,9 @@ if [ ! -d "${OPENSHIFT_DATA_DIR}downloads/current" ]
 then
   pushd ${OPENSHIFT_DATA_DIR}downloads
   JIRA_ARCHIVE=atlassian-jira-${JIRA_VERSION}-war.tar.gz
-  curl -O http://www.atlassian.com/software/jira/downloads/binary/$JIRA_ARCHIVE
+  if [ ! -e JIRA_ARCHIVE ]; then
+    curl -O http://downloads.atlassian.com/software/jira/downloads/$JIRA_ARCHIVE
+  fi
   tar xzf $JIRA_ARCHIVE
   JIRA_INSTALL_DIR=${OPENSHIFT_DATA_DIR}downloads/${JIRA_ARCHIVE::-7}
   ln -s ${JIRA_INSTALL_DIR} ${OPENSHIFT_DATA_DIR}downloads/current
