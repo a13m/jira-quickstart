@@ -58,11 +58,14 @@ cat <<EOF >${JIRA_HOME}/dbconfig.xml
 </jira-database-config>
 EOF
 
-mkdir ${JIRA_INSTALL_DIR}/edit-webapp/WEB-INF/lib
-cp /usr/share/java/postgresql-jdbc.jar ${JIRA_INSTALL_DIR}/edit-webapp/WEB-INF/lib
-rm dist-{generic,tomcat}/*.war
+if [ ! -e ${JIRA_INSTALL_DIR}/edit-webapp/WEB-INF/lib ] ; then
+  mkdir ${JIRA_INSTALL_DIR}/edit-webapp/WEB-INF/lib
+fi
+if [ ! -e ${JIRA_INSTALL_DIR}/edit-webapp/WEB-INF/lib/postgresql-jdbc.jar ]; then
+  cp /usr/share/java/postgresql-jdbc.jar ${JIRA_INSTALL_DIR}/edit-webapp/WEB-INF/lib
+fi
+rm dist-{generic,tomcat}/*.war || true
 ./build.sh
-mv dist-tomcat/atlassian-jira-${JIRA_VERSION}.war \
-   ${OPENSHIFT_REPO_DIR}/deployments/ROOT.war
+mv -f dist-tomcat/atlassian-jira-${JIRA_VERSION}.war ${OPENSHIFT_REPO_DIR}/deployments/ROOT.war
 popd
 
