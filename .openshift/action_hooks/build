@@ -5,6 +5,10 @@ set -e
 JIRA_DIR=${OPENSHIFT_DATA_DIR}jira
 JIRA_VERSION=6.0.2
 
+if [ ! -d ${OPENSHIFT_DATA_DIR}downloads ]; then
+  mkdir ${OPENSHIFT_DATA_DIR}downloads
+fi
+
 #
 # If there is no current download of JIRA, create one.
 #
