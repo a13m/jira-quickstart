@@ -1,0 +1,59 @@
+#!/bin/bash
+
+set -e
+
+JIRA_DIR=${OPENSHIFT_DATA_DIR}jira
+JIRA_VERSION=6.0.2
+
+#
+# If there is no current download of JIRA, create one.
+#
+if [ ! -d "${OPENSHIFT_DATA_DIR}downloads/current" ]
+then
+  pushd ${OPENSHIFT_DATA_DIR}downloads
+  JIRA_ARCHIVE=atlassian-jira-${JIRA_VERSION}-war.tar.gz
+  curl -O http://www.atlassian.com/software/jira/downloads/binary/$JIRA_ARCHIVE
+  tar xzf $JIRA_ARCHIVE
+  JIRA_INSTALL_DIR=${OPENSHIFT_DATA_DIR}downloads/${JIRA_ARCHIVE::-7}
+  ln -s ${JIRA_INSTALL_DIR} ${OPENSHIFT_DATA_DIR}downloads/current
+else
+  JIRA_INSTALL_DIR=`readlink -f ${OPENSHIFT_DATA_DIR}downloads/current`
+  echo "JIRA is already installed at $JIRA_INSTALL_DIR"
+fi
+
+pushd $JIRA_INSTALL_DIR
+mkdir edit-webapp/WEB-INF/lib
+cp /usr/share/java/postgresql-jdbc.jar edit-webapp/WEB-INF/lib
+./build.sh
+mv dist-tomcat/atlassian-jira-${JIRA_VERSION}.war \
+   ${OPENSHIFT_REPO_DIR}/deployments/ROOT.war
+popd
+
+if [ ! -e ${OPENSHIFT_DATA_DIR}/jira ]; then
+  mkdir ${OPENSHIFT_DATA_DIR}/jira
+fi
+JIRA_HOME=${OPENSHIFT_DATA_DIR}/jira
+echo "jira.home = $JIRA_HOME" >> edit-webapp/WEB-INF/classes/jira-application.properties
+cat <<EOF >${JIRA_HOME}/dbconfig.xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jira-database-config>
+  <name>defaultDS</name>
+  <delegator-name>default</delegator-name>
+  <database-type>postgres72</database-type>
+  <schema-name>public</schema-name>
+  <jdbc-datasource>
+    <url>jdbc:postgresql://${OPENSHIFT_POSTGRESQL_DB_HOST}:${OPENSHIFT_POSTGRESQL_DB_PORT}/${OPENSHIFT_APP_NAME}</url>
+    <driver-class>org.postgresql.Driver</driver-class>
+    <username>${OPENSHIFT_POSTGRESQL_DB_USERNAME}</username>
+    <password>${OPENSHIFT_POSTGRESQL_DB_PASSWORD}</password>
+    <pool-min-size>20</pool-min-size>
+    <pool-max-size>20</pool-max-size>
+    <pool-max-wait>30000</pool-max-wait>
+    <pool-max-idle>20</pool-max-idle>
+    <pool-remove-abandoned>true</pool-remove-abandoned>
+    <pool-remove-abandoned-timeout>300</pool-remove-abandoned-timeout>
+  </jdbc-datasource>
+</jira-database-config>
+EOF
+
