@@ -23,7 +23,7 @@ then
 
   JIRA_TOMCAT_OVERRIDES=jira-jars-tomcat-distribution-${JIRA_VERSION}-tomcat-7x.zip
   if [ ! -e $JIRA_TOMCAT_OVERRIDES ]; then
-    curl -O http://www.atlassian.com/software/jira/downloads/binary/$JIRA_TOMCAT_OVERRIDES
+    curl -O http://downloads.atlassian.com/software/jira/downloads/$JIRA_TOMCAT_OVERRIDES
   fi
 
   if [ ! -d ${OPENSHIFT_DATA_DIR}endorsed ]; then
