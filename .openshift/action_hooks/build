@@ -20,6 +20,19 @@ then
     curl -O http://downloads.atlassian.com/software/jira/downloads/$JIRA_ARCHIVE
   fi
   tar xzf $JIRA_ARCHIVE
+
+  JIRA_TOMCAT_OVERRIDES=jira-jars-tomcat-distribution-${JIRA_VERSION}-tomcat-7x.zip
+  if [ ! -e $JIRA_TOMCAT_OVERRIDES ]; then
+    curl -O http://www.atlassian.com/software/jira/downloads/binary/$JIRA_TOMCAT_OVERRIDES
+  fi
+
+  if [ ! -d ${OPENSHIFT_DATA_DIR}endorsed ]; then
+    mkdir ${OPENSHIFT_DATA_DIR}endorsed
+  fi 
+  pushd ${OPENSHIFT_DATA_DIR}endorsed
+  unzip -o ${OPENSHIFT_DATA_DIR}downloads/$JIRA_TOMCAT_OVERRIDES
+  popd
+
   JIRA_INSTALL_DIR=${OPENSHIFT_DATA_DIR}downloads/$( echo $JIRA_ARCHIVE | sed 's/.tar.gz//' )
   ln -s ${JIRA_INSTALL_DIR} ${OPENSHIFT_DATA_DIR}downloads/current
 else
