@@ -1,4 +1,4 @@
 #!/bin/bash
 
 export JAVA_ENDORSED_DIRS=${OPENSHIFT_DATA_DIR}/endorsed
-export CATALINA_OPTS="-Datlassian.plugins.enable.wait=300" 
+export CATALINA_OPTS="-Datlassian.plugins.enable.wait=300 -Dorg.apache.jasper.runtime.BodyContentImpl.LIMIT_BUFFER=true -Dmail.mime.decodeparameters=true" 
