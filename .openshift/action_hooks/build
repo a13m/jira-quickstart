@@ -35,6 +35,7 @@ then
 
   JIRA_INSTALL_DIR=${OPENSHIFT_DATA_DIR}downloads/$( echo $JIRA_ARCHIVE | sed 's/.tar.gz//' )
   ln -s ${JIRA_INSTALL_DIR} ${OPENSHIFT_DATA_DIR}downloads/current
+  patch -d $JIRA_INSTALL_DIR < ${OPENSHIFT_REPO_DIR}/build-xml.patch
 else
   JIRA_INSTALL_DIR=`readlink -f ${OPENSHIFT_DATA_DIR}downloads/current`
   echo "JIRA is already installed at $JIRA_INSTALL_DIR"
@@ -78,7 +79,6 @@ if [ ! -e ${JIRA_INSTALL_DIR}/edit-webapp/WEB-INF/lib/postgresql-jdbc.jar ]; the
   cp /usr/share/java/postgresql-jdbc.jar ${JIRA_INSTALL_DIR}/edit-webapp/WEB-INF/lib
 fi
 rm dist-{generic,tomcat}/*.war || true
-patch < ${OPENSHIFT_REPO_DIR}/build-xml.patch
 ./build.sh
 mv -f dist-tomcat/atlassian-jira-${JIRA_VERSION}.war ${OPENSHIFT_REPO_DIR}/webapps/
 popd
