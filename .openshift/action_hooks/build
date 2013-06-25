@@ -20,6 +20,7 @@ then
     curl -O http://downloads.atlassian.com/software/jira/downloads/$JIRA_ARCHIVE
   fi
   tar xzf $JIRA_ARCHIVE
+  rm $JIRA_ARCHIVE
 
   JIRA_TOMCAT_OVERRIDES=jira-jars-tomcat-distribution-${JIRA_VERSION}-tomcat-7x.zip
   if [ ! -e $JIRA_TOMCAT_OVERRIDES ]; then
@@ -96,3 +97,4 @@ rm dist-tomcat}/*.war || true
 ./build.sh
 mv -f dist-tomcat/atlassian-jira-${JIRA_VERSION}.war ${OPENSHIFT_REPO_DIR}/webapps/
 popd
+rm -rf $JIRA_INSTALL_DIR
