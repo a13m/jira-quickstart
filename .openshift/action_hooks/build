@@ -89,6 +89,9 @@ fi
 if [ ! -e ${JIRA_INSTALL_DIR}/edit-webapp/WEB-INF/lib/postgresql-jdbc.jar ]; then
   cp /usr/share/java/postgresql-jdbc.jar ${JIRA_INSTALL_DIR}/edit-webapp/WEB-INF/lib
 fi
+if [ ! -e ${JIRA_INSTALL_DIR}/edit-webapp/WEB-INF/lib/jta_api.jar ]; then
+  cp /usr/share/java/jta_api.jar ${JIRA_INSTALL_DIR}/edit-webapp/WEB-INF/lib
+fi
 rm dist-tomcat}/*.war || true
 ./build.sh
 mv -f dist-tomcat/atlassian-jira-${JIRA_VERSION}.war ${OPENSHIFT_REPO_DIR}/webapps/
