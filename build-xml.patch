@@ -1,0 +1,28 @@
+--- build.xml	2013-06-11 01:18:00.000000000 -0400
++++ build.xml	2013-06-25 09:20:43.457698954 -0400
+@@ -73,9 +73,9 @@
+     <target name="war" depends="clean, compile" description="Packages the WAR file">
+ 
+         <!-- Build the war file -->
+-        <jar jarfile="${dist-generic}/${name}-${version}.war">
++        <!-- jar jarfile="${dist-generic}/${name}-${version}.war">
+             <fileset dir="${build.war}"/>
+-        </jar>
++        </jar -->
+ 
+         <!-- Tomcat-specific .war -->
+         <jar jarfile="${dist-tomcat}/${name}-${version}.war">
+@@ -83,11 +83,11 @@
+             </fileset>
+         </jar>
+         <!-- Tomcat-6-specific .war -->
+-        <jar jarfile="${dist-tomcat}/tomcat-6/${name}-${version}.war">
++        <!-- jar jarfile="${dist-tomcat}/tomcat-6/${name}-${version}.war">
+             <fileset dir="${build.war}">
+                 <exclude name="WEB-INF/lib/log4j-*.jar"/>
+             </fileset>
+-        </jar>
++        </jar -->
+         <!-- While we're at it, generate correct Tomcat/Resin config files -->
+         <copy file="etc/jira.xml" todir="${dist-tomcat}/tomcat-4">
+             <filterset>
