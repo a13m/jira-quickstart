@@ -5,6 +5,9 @@ set -e
 JIRA_DIR=${OPENSHIFT_DATA_DIR}jira
 JIRA_VERSION=6.0.2
 
+# FIXME:  this is terrible
+rm -rf ${OPENSHIFT_JBOSSEWS_DIR}/work/Catalina/localhost/atlassian-jira-${JIRA_VERSION}
+
 if [ ! -d ${OPENSHIFT_DATA_DIR}downloads ]; then
   mkdir ${OPENSHIFT_DATA_DIR}downloads
 fi
