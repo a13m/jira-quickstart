@@ -80,7 +80,6 @@ fi
 rm dist-{generic,tomcat}/*.war || true
 patch < ${OPENSHIFT_REPO_DIR}/build-xml.patch
 ./build.sh
-rm dist-generic/atlassian-jira-${JIRA_VERSION}.war
 mv -f dist-tomcat/atlassian-jira-${JIRA_VERSION}.war ${OPENSHIFT_REPO_DIR}/webapps/
 popd
 
