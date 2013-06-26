@@ -76,11 +76,9 @@ cat <<EOF >${JIRA_HOME}/dbconfig.xml
 </jira-database-config>
 EOF
 
-if [ ! -e ${JIRA_INSTALL_DIR}/edit-webapp/META-INF ] ; then
-  mkdir -p ${JIRA_INSTALL_DIR}/edit-webapp/META-INF
-fi
-cat <<EOF >${JIRA_INSTALL_DIR}/edit-webapp/META-INF/context.xml
-<Context path="/jira" docBase="" debug="0" useHttpOnly="true">
+cat <<EOF >${OPENSHIFT_JBOSSEWS_DIR}/conf/Catalina/localhost/jira.xml
+<?xml version="1.0" encoding="utf-8"?>
+<Context path="/jira" docBase="${OPENSHIFT_DATA_DIR}/atlassian-jira-${JIRA_VERSION}.war" debug="0" useHttpOnly="true">
   <Resource name="UserTransaction" auth="Container" type="javax.transaction.UserTransaction"
     factory="org.objectweb.jotm.UserTransactionFactory" jotm.timeout="60"/>
   <Manager pathname=""/>
@@ -96,8 +94,8 @@ fi
 if [ ! -e ${JIRA_INSTALL_DIR}/edit-webapp/WEB-INF/lib/jta_api.jar ]; then
   cp /usr/share/java/jta_api.jar ${JIRA_INSTALL_DIR}/edit-webapp/WEB-INF/lib
 fi
-rm ${OPENSHIFT_REPO_DIR}/webapps/atlassian-jira-*.war || true
+rm ${OPENSHIFT_DATA_DIR}/atlassian-jira-*.war || true
 ./build.sh
-mv -f dist-tomcat/atlassian-jira-${JIRA_VERSION}.war ${OPENSHIFT_REPO_DIR}/webapps/
+mv -f dist-tomcat/atlassian-jira-${JIRA_VERSION}.war ${OPENSHIFT_DATA_DIR}/atlassian-jira-${JIRA_VERSION}.war
 popd
 rm -rf $JIRA_INSTALL_DIR
