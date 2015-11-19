@@ -3,11 +3,12 @@
 set -e
 
 JIRA_DIR=${OPENSHIFT_DATA_DIR}jira
-JIRA_VERSION=6.0.2
+JIRA_VERSION=7.0.2
 
 # FIXME:  this is terrible
 rm -rf ${OPENSHIFT_JBOSSEWS_DIR}/work/Catalina/localhost/atlassian-jira-${JIRA_VERSION}
 
+# Creates a download folder
 if [ ! -d ${OPENSHIFT_DATA_DIR}downloads ]; then
   mkdir ${OPENSHIFT_DATA_DIR}downloads
 fi
@@ -18,7 +19,7 @@ fi
 if [ ! -d "${OPENSHIFT_DATA_DIR}downloads/current" ]
 then
   pushd ${OPENSHIFT_DATA_DIR}downloads
-  JIRA_ARCHIVE=atlassian-jira-${JIRA_VERSION}-war.tar.gz
+  JIRA_ARCHIVE=atlassian-jira-software-${JIRA_VERSION}-jira-${JIRA_VERSION}.tar.gz
   if [ ! -e $JIRA_ARCHIVE ]; then
     curl -O http://downloads.atlassian.com/software/jira/downloads/$JIRA_ARCHIVE
   fi
@@ -45,10 +46,10 @@ else
   echo "JIRA is already installed at $JIRA_INSTALL_DIR"
 fi
 
-if [ ! -e ${OPENSHIFT_DATA_DIR}/jira ]; then
-  mkdir ${OPENSHIFT_DATA_DIR}/jira
+if [ ! -e ${JIRA_DIR} ]; then
+  mkdir ${JIRA_DIR}
 fi
-JIRA_HOME=${OPENSHIFT_DATA_DIR}/jira
+JIRA_HOME=${JIRA_DIR}
 
 pushd $JIRA_INSTALL_DIR
 echo "jira.home = $JIRA_HOME" >> edit-webapp/WEB-INF/classes/jira-application.properties
